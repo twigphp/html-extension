@@ -92,20 +92,20 @@ final class HtmlExtension extends AbstractExtension
     {
         $classes = [];
         foreach ($args as $i => $arg) {
-            if (\is_string($arg)) {
-                $classes[] = $arg;
+            if (\is_string($arg) || $arg instanceof \Stringable) {
+                $classes[] = (string) $arg;
             } elseif (\is_array($arg)) {
                 foreach ($arg as $class => $condition) {
-                    if (!\is_string($class)) {
-                        throw new RuntimeError(\sprintf('The "html_classes" function argument %d (key %d) should be a string, got "%s".', $i, $class, get_debug_type($class)));
+                    if (!\is_string($class) && !$class instanceof \Stringable) {
+                        throw new RuntimeError(\sprintf('The "html_classes" function argument %d (key %d) should be a string or an instance of Stringable, got "%s".', $i, $class, get_debug_type($class)));
                     }
                     if (!$condition) {
                         continue;
                     }
-                    $classes[] = $class;
+                    $classes[] = (string) $class;
                 }
             } else {
-                throw new RuntimeError(\sprintf('The "html_classes" function argument %d should be either a string or an array, got "%s".', $i, get_debug_type($arg)));
+                throw new RuntimeError(\sprintf('The "html_classes" function argument %d should be either a string, an instance of Stringable or an array, got "%s".', $i, get_debug_type($arg)));
             }
         }
 
